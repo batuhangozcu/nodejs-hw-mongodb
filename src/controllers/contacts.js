@@ -1,5 +1,6 @@
 import { getAllContacts } from '../services/contacts.js';
 import { getContactById } from '../services/contacts.js';
+import mongoose from 'mongoose';
 
 export const handleGetContacts = async (req, res) => {
   const contacts = await getAllContacts();
@@ -10,17 +11,28 @@ export const handleGetContacts = async (req, res) => {
   });
 };
 
-export const handleGetContactById = async (req, res) => {
-  const { contactId } = req.params;
-  const contact = await getContactById(contactId);
-  if (!contact) {
-    return res.status(404).json({
-      message: 'Contact not found',
+export const handleGetContactById = async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(contactId)) {
+      return res.status(400).json({ message: 'Invalid contact ID format' });
+    }
+
+    const contact = await getContactById(contactId);
+
+    if (!contact) {
+      return res.status(404).json({
+        message: 'Contact not found',
+      });
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: `Successfully found contact with id ${contactId}!`,
+      data: contact,
     });
+  } catch (error) {
+    next(error);
   }
-  res.status(200).json({
-    status: 200,
-    message: `Successfully found contact with id ${contactId}!`,
-    data: contact,
-  });
 };
