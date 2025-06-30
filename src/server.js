@@ -1,9 +1,10 @@
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
-import contactsRouter from './routers/contacts.js';
+import router from './routers/index.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import notFoundHandler from './middlewares/notFoundHandler.js';
+import cookieParser from 'cookie-parser';
 
 export const setupServer = (PORT) => {
   const app = express();
@@ -18,11 +19,13 @@ export const setupServer = (PORT) => {
     }),
   );
 
+  app.use(cookieParser());
+
   app.get('/', (req, res) => {
     res.send('Hello World!');
   });
 
-  app.use(contactsRouter);
+  app.use(router);
   app.use(notFoundHandler);
   app.use(errorHandler);
 

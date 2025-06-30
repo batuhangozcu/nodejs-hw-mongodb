@@ -9,19 +9,18 @@ import {
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { contactSchema, updateContactSchema } from '../validation/contact.js';
+import { authenticate } from '../middlewares/authenticate.js';
 
 const router = Router();
 
-router.get('/contacts', ctrlWrapper(handleGetContacts));
-router.get('/contacts/:contactId', ctrlWrapper(handleGetContactById));
-router.post(
-  '/contacts',
-  validateBody(contactSchema),
-  ctrlWrapper(handleAddContact),
-);
-router.delete('/contacts/:contactId', ctrlWrapper(handleDeleteContact));
+router.use(authenticate);
+
+router.get('/', ctrlWrapper(handleGetContacts));
+router.get('/:contactId', ctrlWrapper(handleGetContactById));
+router.post('/', validateBody(contactSchema), ctrlWrapper(handleAddContact));
+router.delete('/:contactId', ctrlWrapper(handleDeleteContact));
 router.patch(
-  '/contacts/:contactId',
+  '/:contactId',
   validateBody(updateContactSchema),
   ctrlWrapper(handleUpdateContact),
 );

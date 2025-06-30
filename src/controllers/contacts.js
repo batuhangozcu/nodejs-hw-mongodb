@@ -21,6 +21,7 @@ export const handleGetContacts = async (req, res) => {
     sortBy,
     sortOrder,
     filter,
+    userId: req.user._id,
   });
 
   res.status(200).json({
@@ -37,7 +38,7 @@ export const handleGetContactById = async (req, res, next) => {
     throw createHttpError(400, 'Invalid contact ID format');
   }
 
-  const contact = await getContactById(contactId);
+  const contact = await getContactById(contactId, req.user._id);
 
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
@@ -51,7 +52,7 @@ export const handleGetContactById = async (req, res, next) => {
 };
 
 export const handleAddContact = async (req, res) => {
-  const contact = await addContact(req.body);
+  const contact = await addContact({ ...req.body, userId: req.user._id });
   res.status(201).json({
     status: 201,
     message: 'Successfully added contact!',
@@ -66,7 +67,7 @@ export const handleDeleteContact = async (req, res) => {
     throw createHttpError(400, 'Invalid contact ID format');
   }
 
-  const contact = await deleteContact(contactId);
+  const contact = await deleteContact(contactId, req.user._id);
 
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
@@ -100,7 +101,7 @@ export const handleUpdateContact = async (req, res, next) => {
     throw createHttpError(400, 'No fields provided for update');
   }
 
-  const updatedContact = await updateContact(contactId, req.body);
+  const updatedContact = await updateContact(contactId, req.body, req.user._id);
 
   if (!updatedContact) {
     throw createHttpError(404, 'Contact not found');
