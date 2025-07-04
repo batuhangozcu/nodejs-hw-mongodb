@@ -34,6 +34,31 @@ const loginObject = {
   }),
 };
 
+export const resetEmailObject = {
+  email: Joi.string().email().required().messages({
+    'string.base': 'Email must be a string',
+    'string.empty': 'Email cannot be empty',
+    'string.email': 'Email must be a valid email address',
+  }),
+};
+
+const resetPasswordObject = {
+  token: Joi.string().required().messages({
+    'string.base': 'Token must be a string',
+    'string.empty': 'Token cannot be empty',
+  }),
+  password: Joi.string().min(6).max(20).required().messages({
+    'string.base': 'Password must be a string',
+    'string.empty': 'Password cannot be empty',
+    'string.min': 'Password must be at least 6 characters long',
+    'string.max': 'Password must be at most 20 characters long',
+  }),
+};
+
+export const resetEmailSchema = Joi.object(resetEmailObject);
+
+export const resetPasswordSchema = Joi.object(resetPasswordObject);
+
 export const registerSchema = Joi.object(registerObject);
 
 export const loginSchema = Joi.object(loginObject);

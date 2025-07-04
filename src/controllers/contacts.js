@@ -10,6 +10,9 @@ import createHttpError from 'http-errors';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { env } from '../utils/env.js';
 
 export const handleGetContacts = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -52,7 +55,22 @@ export const handleGetContactById = async (req, res, next) => {
 };
 
 export const handleAddContact = async (req, res) => {
-  const contact = await addContact({ ...req.body, userId: req.user._id });
+  const photo = req.file;
+  let photoUrl;
+
+  if (photo) {
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
+  const contact = await addContact({
+    ...req.body,
+    userId: req.user._id,
+    photo: photoUrl,
+  });
   res.status(201).json({
     status: 201,
     message: 'Successfully added contact!',
@@ -87,6 +105,17 @@ const allowedFields = [
 export const handleUpdateContact = async (req, res, next) => {
   const { contactId } = req.params;
 
+  const photo = req.file;
+  let photoUrl;
+
+  if (photo) {
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     throw createHttpError(400, 'Invalid contact ID format');
   }
@@ -97,11 +126,15 @@ export const handleUpdateContact = async (req, res, next) => {
     throw createHttpError(400, `Invalid fields: ${invalidFields.join(', ')}`);
   }
 
-  if (keys.length === 0) {
+  if (keys.length === 0 && !photoUrl) {
     throw createHttpError(400, 'No fields provided for update');
   }
 
-  const updatedContact = await updateContact(contactId, req.body, req.user._id);
+  const updatedContact = await updateContact(
+    contactId,
+    { ...req.body, photo: photoUrl },
+    req.user._id,
+  );
 
   if (!updatedContact) {
     throw createHttpError(404, 'Contact not found');

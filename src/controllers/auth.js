@@ -1,10 +1,11 @@
-import { set } from 'mongoose';
 import { THIRTY_DAYS } from '../constants/index.js';
 import {
   registerUser,
   loginUser,
   logoutUser,
   refreshUserSession,
+  resetEmail,
+  resetPassword,
 } from '../services/auth.js';
 
 export const handleRegister = async (req, res) => {
@@ -67,5 +68,31 @@ export const handleRefreshSession = async (req, res) => {
     data: {
       accessToken: session.accessToken,
     },
+  });
+};
+
+export const handleResetEmail = async (req, res) => {
+  if (!req.body.email) {
+    return res.status(400).json({
+      status: 400,
+      message: 'Email is required.',
+    });
+  }
+
+  await resetEmail(req.body.email);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Reset password email has been successfully sent.',
+    data: {},
+  });
+};
+
+export const handleResetPassword = async (req, res) => {
+  await resetPassword(req.body);
+  res.status(200).json({
+    status: 200,
+    message: 'Password has been successfully reset.',
+    data: {},
   });
 };
