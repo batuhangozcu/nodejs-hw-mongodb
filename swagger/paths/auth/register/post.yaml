@@ -1,0 +1,29 @@
+tags:
+  - Auth
+summary: User registration
+operationId: registerUser
+description: 'User registration'
+requestBody:
+  content:
+    application/json:
+      schema:
+        $ref: '../../../components/schemas/user.yaml'
+responses:
+  '201':
+    $ref: '../../../components/responses/201.yaml'
+  '409':
+    description: 'Conflict'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 409
+            message:
+              type: string
+              example: 'User already exists'

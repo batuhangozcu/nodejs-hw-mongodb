@@ -1,0 +1,12 @@
+tags:
+  - Auth
+summary: User logout
+operationId: logoutUser
+description: 'User logout from the system'
+responses:
+  '204':
+    description: User logged out successfully (no content)
+  '400':
+    $ref: '../../../components/responses/400.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'

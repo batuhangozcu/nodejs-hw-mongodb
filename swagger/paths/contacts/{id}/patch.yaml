@@ -1,0 +1,60 @@
+tags:
+  - Contacts
+summary: Update contact by ID
+operationId: updateContact
+description: 'Update contact by ID'
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    description: 'Contact ID'
+    schema:
+      type: string
+      example: '5f8d0c3b9b1e8c001f8d0c3b'
+requestBody:
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+          phoneNumber:
+            type: string
+          email:
+            type: string
+            format: email
+          contactType:
+            type: string
+            enum: [personal, home, work]
+          isFavorite:
+            type: boolean
+          photo:
+            type: string
+            format: binary
+responses:
+'200':
+  description: 'Contact updated successfully'
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - status
+          - message
+          - data
+        properties:
+          status:
+            type: integer
+            example: 200
+          message:
+            type: string
+            example: 'Contact updated successfully'
+          data:
+            $ref: '../swagger/components/schemas/contact.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'

@@ -1,0 +1,35 @@
+type: object
+required:
+  - _id
+  - name
+  - email
+  - password
+properties:
+  _id:
+    description: "User's id"
+    type: string
+    example: 65e4decdd286b30065d54af9
+  name:
+    description: "User's name"
+    type: string
+    example: 'John Doe'
+  email:
+    description: "User's email address"
+    type: string
+    format: email
+    unique: true
+    example: 'john.doe@example.com'
+  password:
+    description: "User's password"
+    type: string
+    example: '$2b$17$UrG/fVDegYCoRej.dcIWJ.3KUwsfRt0Ho9cncsjLnDtr/DPt3Cu9C'
+  createdAt:
+    description: 'User creation date'
+    type: string
+    format: date-time
+    example: '2023-10-01T12:00:00Z'
+  updatedAt:
+    description: 'User update date'
+    type: string
+    format: date-time
+    example: '2023-10-01T12:00:00Z'

@@ -1,0 +1,30 @@
+tags:
+  - Auth
+summary: User password reset
+operationId: resetPassword
+description: 'User password reset'
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - token
+          - password
+        properties:
+          token:
+            type: string
+            description: 'Password reset JWT token'
+            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+          password:
+            type: string
+            format: password
+            description: 'New password'
+            example: 'newpassword123'
+responses:
+  '200':
+    $ref: '../../../components/responses/200.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'
